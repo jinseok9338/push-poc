@@ -1,0 +1,20 @@
+# Set the base image to use
+FROM node:16.9.0-alpine3.14
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the package.json and package-lock.json files to the working directory
+COPY package*.json ./
+
+# Install the necessary packages
+RUN npm install
+
+# Copy the source code to the working directory
+COPY . .
+
+# Expose the port that the client listens on
+EXPOSE 5173
+
+# Start the client app
+CMD ["npm", "run", "dev"]
