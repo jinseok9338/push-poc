@@ -1,27 +1,37 @@
-version: '3'
+version: "3"
 
 services:
-  db:
-    image: postgres
+  postgres:
+    image: postgres:13
+    
+    restart: always
     environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: example
       POSTGRES_DB: mydb
-      POSTGRES_USER: myuser
-      POSTGRES_PASSWORD: mypassword
-    volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    ports:
-      - "5432:5432"
+
   server:
     build: ./server
-    ports:
-      - "8080:8080"
+    platform: linux/amd64
     depends_on:
-      - db
-    environment:
-      DATABASE_URL: postgresql://myuser:mypassword@db:5432/mydb
-  client:
-    build: ./client
+      - postgres
     ports:
       - "3000:3000"
+    environment:
+      DATABASE_URL: postgres://postgres:example@postgres:5432/mydb
+    volumes:
+      - ./server:/app
+    command: ["air"]
+
+  client:
+    build: ./client
+    platform: linux/amd64
     depends_on:
       - server
+    ports:
+      - "5173:5173"
+    environment:
+      SERVER_URL: http://server:3000
+    volumes:
+      - ./client:/app
+    command: sh -c "npm rebuild esbuild && yarn dev"
