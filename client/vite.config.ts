@@ -1,9 +1,12 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
 
+import reactRefresh from '@vitejs/plugin-react-refresh'
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [reactRefresh()],
+  define: {
+    global: {}
+  },
   server: {
     watch: {
       usePolling: true,
@@ -12,3 +15,5 @@ export default defineConfig({
     strictPort: true,
     port: 5173, // you can replace this port with any port
   }})
+
+
